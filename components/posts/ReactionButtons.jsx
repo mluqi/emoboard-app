@@ -68,7 +68,7 @@ const ReactionButtons = ({ postId }) => {
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 flex-wrap">
       {reactionTypes.map(({ type, Icon, color }) => {
         const count = reactionCounts[type] || 0;
         const isSelected = userReaction === type;

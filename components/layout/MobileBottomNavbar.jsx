@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, PlusSquare, User, Bell } from "lucide-react";
@@ -17,7 +17,7 @@ const MobileBottomNavbar = () => {
 
   const navLinks = [
     { href: "/dashboard", icon: Home, label: "Home" },
-    { href: "/post/create", icon: PlusSquare, label: "Add Emo" },
+    { href: "/post/create", icon: PlusSquare, label: "Post" },
     { href: "/notifications", icon: Bell, label: "Notifications" },
     { href: `/profile/${profile.username}`, icon: User, label: "Profile" },
   ];
@@ -32,10 +32,18 @@ const MobileBottomNavbar = () => {
             className={cn(
               "inline-flex flex-col items-center justify-center px-5 font-medium hover:bg-accent group",
               pathname === href ? "text-primary" : "text-muted-foreground"
-            )}
+            )} 
           >
             <div className="relative pt-1">
-              <Icon className="w-6 h-6 mb-1" />
+              {label === "Profile" && profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt="Profile"
+                  className="w-6 h-6 mb-1 rounded-full object-cover"
+                />
+              ) : (
+                <Icon className="w-6 h-6 mb-1" />
+              )}
               {label === "Notifications" && unreadCount > 0 && (
                 <span className="absolute top-0 right-0 flex h-4 w-4 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                   {unreadCount > 9 ? "9+" : unreadCount}

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, MessageSquare, MoreHorizontal, Trash2 } from "lucide-react";
 import CommentSection from "../comments/CommentSection";
 import ReactionButtons from "./ReactionButtons";
+import ShareButtons from "./ShareButtons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,7 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import DeleteConfirmationDialog from "../common/DeleteConfirmationDialog";
 
-const PostCard = ({ post, onPostDeleted }) => {
+const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
   const {
     post_id,
     title,
@@ -37,7 +38,7 @@ const PostCard = ({ post, onPostDeleted }) => {
     view_count,
   } = post;
   const { user } = useAuth();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(isDetailPage);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const postDate = new Date(created_at).toLocaleString();
   const isAuthor = user && user.id === post.user_id;
@@ -48,7 +49,7 @@ const PostCard = ({ post, onPostDeleted }) => {
     // Ini adalah cara sederhana untuk melacak tayangan.
     if (user) {
       const recordView = async () => {
-        await client.rpc('record_post_view', {
+        await client.rpc("record_post_view", {
           post_id_to_view: post_id,
         });
       };
@@ -109,6 +110,40 @@ const PostCard = ({ post, onPostDeleted }) => {
     );
   };
 
+  const ContentWrapper = ({ children }) => {
+    if (isDetailPage) {
+      return <div>{children}</div>;
+    }
+    return <Link href={`/post/${post_id}`}>{children}</Link>;
+  };
+
+  const contentBody = (
+    <CardContent>
+      <CardTitle className="mb-2">{title}</CardTitle>
+      <p className="whitespace-pre-wrap">
+        {content.length > 480 && !isExpanded
+          ? `${content.substring(0, 480)}...`
+          : content}
+      </p>
+      {content.length > 480 && !isDetailPage && (
+        <Button
+          variant="link"
+          className="p-0 h-auto mt-2 text-primary"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsExpanded(!isExpanded);
+          }}
+        >
+          {isExpanded ? "Show less" : "Read more"}
+        </Button>
+      )}
+      {emotion && (
+        <p className="text-xs text-muted-foreground mt-4">Feeling: {emotion}</p>
+      )}
+    </CardContent>
+  );
+
   return (
     <Card
       id={post_id}
@@ -143,44 +178,27 @@ const PostCard = ({ post, onPostDeleted }) => {
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <CardTitle className="mb-2">{title}</CardTitle>
-        <p className="whitespace-pre-wrap">
-          {content.length > 480 && !isExpanded
-            ? `${content.substring(0, 480)}...`
-            : content}
-        </p>
-        {content.length > 480 && (
-          <Button
-            variant="link"
-            className="p-0 h-auto mt-2 text-primary"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? "Show less" : "Read more"}
-          </Button>
-        )}
-        {emotion && (
-          <p className="text-xs text-muted-foreground mt-4">
-            Feeling: {emotion}
-          </p>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-between items-center border-t pt-2 pb-2">
-        <div className="flex items-center gap-4 text-muted-foreground text-sm">
+      <ContentWrapper>{contentBody}</ContentWrapper>
+      <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t pt-4 pb-2">
+        <div className="flex items-center gap-1 text-muted-foreground text-sm w-full">
           <ReactionButtons postId={post_id} />
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 sm:ml-auto">
             <Eye className="h-4 w-4" />
             <span>{view_count}</span>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCommentsOpen(!commentsOpen)}
-        >
-          <MessageSquare className="mr-2 h-4 w-4" />
-          {commentCount} Comments
-        </Button>
+        <div className="flex items-center gap-2 w-full">
+          <ShareButtons post={post} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCommentsOpen(!commentsOpen)}
+            className="flex-1 justify-center w-full"
+          >
+            <MessageSquare className="mr-2 h-4 w-4" />
+            {commentCount} Comments
+          </Button>
+        </div>
       </CardFooter>
       {commentsOpen && <CommentSection postId={post_id} />}
     </Card>

@@ -3,10 +3,9 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import PostCard from "./PostCard";
 
-const PostList = ({ userId }) => {
+const PostList = ({ userId, sortOption = 'latest', moodOption = 'all' }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const handlePostDeleted = (deletedPostId) => {
     setPosts((currentPosts) =>
@@ -18,20 +17,21 @@ const PostList = ({ userId }) => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        let query = client
-          .from("posts")
-          .select(
-            "*, profile:profiles(username, avatar_url, full_name), comments(count)"
-          )
-          .order("created_at", { ascending: false });
+        const { data, error } = await client.rpc('get_posts', {
+          p_sort_by: sortOption,
+          p_mood: moodOption === 'all' ? null : moodOption,
+          p_user_id: userId,
+        });
 
-        if (userId) {
-          query = query.eq("user_id", userId).eq("is_anonymous", false);
-        }
-
-        const { data, error } = await query;
         if (error) throw error;
-        setPosts(data);
+
+        // Adapt the data structure to match what PostCard expects
+        const formattedData = data.map(post => ({
+          ...post,
+          comments: [{ count: post.comment_count }]
+        }));
+
+        setPosts(formattedData);
       } catch (error) {
         toast.error("Failed to fetch posts: " + error.message);
       } finally {
@@ -41,15 +41,7 @@ const PostList = ({ userId }) => {
 
     fetchPosts();
 
-    const channel = client.channel('realtime posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
-        setRefreshKey(prev => prev + 1);
-      }).subscribe();
-
-    return () => {
-      client.removeChannel(channel);
-    };
-  }, [userId, refreshKey]);
+  }, [userId, sortOption, moodOption]);
 
   if (loading)
     return <p className="text-sm text-muted-foreground">Loading posts...</p>;

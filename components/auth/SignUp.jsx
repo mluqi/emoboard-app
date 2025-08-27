@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -14,28 +14,38 @@ import { toast } from "sonner";
 import client from "@/api/client";
 
 const SignUp = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    setLoading(true);
 
     if (!email || !password) {
       toast.error("Please fill all the fields");
+      setLoading(false);
       return;
     }
 
-    const { data, error } = await client.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await client.auth.signUp({
+        email,
+        password,
+      });
 
-    if (data) {
-      toast.success("Sign Up Successful, Please login now.");
-      return;
-    }
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
 
-    if (error) {
-      toast.error(error.message);
+      if (data.user) {
+        toast.success("Sign Up Successful! Please check your email for verification.");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,16 +62,27 @@ const SignUp = () => {
               <Label>Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="example@gmail.com"
-              ></Input>
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
             </div>
             <div className="grid gap-2">
               <Label>Password</Label>
-              <Input id="password" type="password"></Input>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
             </div>
-            <Button type="submit" className="w-full">
-              Sign Up
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing up..." : "Sign Up"}
             </Button>
           </div>
         </form>

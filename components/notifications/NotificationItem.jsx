@@ -12,7 +12,7 @@ const NotificationItem = ({ notification }) => {
   };
 
   return (
-    <Link href={`/dashboard#${post.post_id}`} className="block">
+    <Link href={`/post/${post.post_id}`} className="block">
       <div
         className={cn(
           "p-3 flex items-center gap-3 hover:bg-accent/50 rounded-md",

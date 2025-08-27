@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -14,23 +15,42 @@ import { toast } from "sonner";
 import client from "@/api/client";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    setLoading(true);
 
     if (!email || !password) {
       toast.error("Please fill all the fields");
+      setLoading(false);
       return;
     }
 
-    const { data, error } = await client.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      toast.error("Unable to Login. Pleasew try again.");
+      if (error) {
+        toast.error(error.message || "Unable to Login. Please try again.");
+        setLoading(false); // Ensure loading stops on error
+        return;
+      }
+
+      if (data.user) {
+        toast.success("Login Successful! Redirecting...");
+        // The onAuthStateChange listener will handle the redirect, but a manual push can be faster.
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,16 +67,27 @@ const Login = () => {
               <Label>Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="example@gmail.com"
-              ></Input>
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
             </div>
             <div className="grid gap-2">
               <Label>Password</Label>
-              <Input id="password" type="password"></Input>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </div>
         </form>

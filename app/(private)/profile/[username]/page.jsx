@@ -60,7 +60,7 @@ const ProfilePage = () => {
           <h2 className="text-2xl font-bold mb-6">
             Posts by {profile.username}
           </h2>
-          <PostList userId={profile.id} />
+          <PostList userId={profile.id} sortOption="latest" moodOption="all" />
         </div>
       </div>
     </div>
