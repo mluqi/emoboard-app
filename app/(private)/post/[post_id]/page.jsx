@@ -1,78 +1,71 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import React from "react";
 import client from "@/api/client";
-import { toast } from "sonner";
-import Loader from "@/components/ui/Loader";
-import PostCard from "@/components/posts/PostCard";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import PostDetailClient from "./PostDetailClient";
 
-const PostDetailPage = () => {
-  const { post_id } = useParams();
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+async function getPostData(postId) {
+  try {
+    const { data, error } = await client
+      .rpc('get_posts', {
+        p_user_id: null,
+        p_sort_by: 'latest',
+        p_mood: null,
+      })
+      .eq('post_id', postId)
+      .single();
 
-  useEffect(() => {
-    if (!post_id) return;
+    if (error) throw error;
 
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        // Menggunakan fungsi RPC yang sudah ada untuk efisiensi
-        const { data, error: postError } = await client
-          .rpc("get_posts", {
-            p_user_id: null,
-            p_sort_by: "latest",
-            p_mood: null,
-          })
-          .eq("post_id", post_id)
-          .single();
+    if (data) {
+      // Adaptasi struktur data agar sesuai dengan yang diharapkan PostCard
+      return { ...data, comments: [{ count: data.comment_count }] };
+    }
+    return null;
+  } catch (err) {
+    console.error("Failed to fetch post:", err.message);
+    return null;
+  }
+}
 
-        if (postError) throw postError;
+export async function generateMetadata({ params }) {
+  const post = await getPostData(params.post_id);
 
-        if (data) {
-          // Adaptasi struktur data agar sesuai dengan yang diharapkan PostCard
-          const formattedPost = {
-            ...data,
-            comments: [{ count: data.comment_count }],
-          };
-          setPost(formattedPost);
-        } else {
-          setError("Post not found.");
-        }
-      } catch (err) {
-        setError(err.message);
-        toast.error("Failed to fetch post: " + err.message);
-      } finally {
-        setLoading(false);
-      }
+  if (!post) {
+    return {
+      title: "Post Not Found",
     };
+  }
 
-    fetchPost();
-  }, [post_id]);
+  const siteName = "EmoBoard";
+  const title = `${post.title} | ${siteName}`;
+  const description = post.content.substring(0, 155) + (post.content.length > 155 ? "..." : "");
+  const imageUrl = post.is_anonymous ? `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png` : post.profile.avatar_url;
 
-  if (loading) return <Loader />;
-  if (error)
-    return <div className="text-center text-destructive p-8">{error}</div>;
-  if (!post) return <div className="text-center p-8">Post not found.</div>;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/post/${post.post_id}`,
+      siteName,
+      images: [{ url: imageUrl }],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
+const PostDetailPage = async ({ params }) => {
+  const post = await getPostData(params.post_id);
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
-      <div className="w-full max-w-2xl">
-        <div className="mb-4">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/dashboard">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Feed
-            </Link>
-          </Button>
-        </div>
-        <PostCard post={post} isDetailPage={true} />
-      </div>
+      <PostDetailClient post={post} />
     </div>
   );
 };
