@@ -26,6 +26,7 @@ import DeleteConfirmationDialog from "../common/DeleteConfirmationDialog";
 
 const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
   const {
+    // ... (properti post lainnya)
     post_id,
     title,
     content,
@@ -37,6 +38,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
     comments,
     view_count,
   } = post;
+  const cardRef = React.useRef(null);
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(isDetailPage);
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -148,7 +150,8 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
     <Card
       id={post_id}
       style={{ borderLeft: `4px solid ${color_tag || "transparent"}` }}
-      className="scroll-mt-20"
+      className="scroll-mt-20 bg-card"
+      ref={cardRef}
     >
       <CardHeader className="flex flex-row items-center gap-4 pb-4">
         <PostAuthor />
@@ -188,7 +191,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
           </div>
         </div>
         <div className="flex items-center gap-2 w-full">
-          <ShareButtons post={post} />
+          <ShareButtons post={post} cardRef={cardRef} />
           <Button
             variant="ghost"
             size="sm"

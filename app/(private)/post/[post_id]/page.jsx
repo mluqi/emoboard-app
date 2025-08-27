@@ -37,8 +37,8 @@ export async function generateMetadata({ params }) {
 
   const siteName = "EmoBoard";
   const title = `${post.title} | ${siteName}`;
-  const description = post.content.substring(0, 155) + (post.content.length > 155 ? "..." : "");
-  const imageUrl = post.is_anonymous ? `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png` : post.profile.avatar_url;
+  const description =
+    post.content.substring(0, 155) + (post.content.length > 155 ? "..." : "");
 
   return {
     title,
@@ -48,14 +48,13 @@ export async function generateMetadata({ params }) {
       description,
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/post/${post.post_id}`,
       siteName,
-      images: [{ url: imageUrl }],
-      type: 'article',
+      // 'images' akan diisi secara otomatis oleh opengraph-image.jsx
+      type: "article",
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title,
       description,
-      images: [imageUrl],
     },
   };
 }
