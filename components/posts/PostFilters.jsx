@@ -18,33 +18,29 @@ const PostFilters = ({
   const moods = ["happy", "angry", "sad", "confused", "flat"];
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row gap-3 mb-4">
       <div className="flex-1">
-        <label className="text-sm font-medium text-muted-foreground">
-          Sort by
-        </label>
         <Select value={sortOption} onValueChange={onSortChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Sort posts" />
+          <SelectTrigger className="bg-muted/50 border-none shadow-none text-sm py-2 h-9">
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="latest">Latest</SelectItem>
-            <SelectItem value="popular">Most Popular (Comments)</SelectItem>
+          <SelectContent className="bg-muted/80 backdrop-blur-sm border-none">
+            <SelectItem value="latest" className="text-sm focus:bg-muted">Latest</SelectItem>
+            <SelectItem value="popular" className="text-sm focus:bg-muted">
+              Most Popular (Comments)
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div className="flex-1">
-        <label className="text-sm font-medium text-muted-foreground">
-          Filter by Mood
-        </label>
         <Select value={moodOption} onValueChange={onMoodChange}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-muted/50 border-none shadow-none text-sm py-2 h-9">
             <SelectValue placeholder="Filter by mood" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Moods</SelectItem>
+          <SelectContent className="bg-muted/80 backdrop-blur-sm border-none">
+            <SelectItem value="all" className="text-sm focus:bg-muted">All Moods</SelectItem>
             {moods.map((mood) => (
-              <SelectItem key={mood} value={mood} className="capitalize">
+              <SelectItem key={mood} value={mood} className="text-sm capitalize focus:bg-muted">
                 {mood}
               </SelectItem>
             ))}

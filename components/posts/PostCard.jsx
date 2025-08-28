@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { formatPostDate } from "@/lib/dateUtils";
 import DeleteConfirmationDialog from "../common/DeleteConfirmationDialog";
 
-const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
+const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled }) => {
   const {
     // ... (properti post lainnya)
     post_id,
@@ -37,15 +37,16 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
     emotion,
     color_tag,
     is_anonymous,
-    comments,
     view_count,
+    comment_count,
+    reaction_counts,
+    user_reaction,
   } = post;
   const cardRef = React.useRef(null);
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(isDetailPage);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const isAuthor = user && user.id === post.user_id;
-  const commentCount = comments[0]?.count || 0;
 
   useEffect(() => {
     // Panggil fungsi RPC untuk menaikkan view count saat komponen post ditampilkan.
@@ -188,8 +189,13 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
       </CardHeader>
       <ContentWrapper>{contentBody}</ContentWrapper>
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t pt-4 pb-2">
-        <div className="flex items-center gap-1 text-muted-foreground text-sm w-full">
-          <ReactionButtons postId={post_id} />
+        <div className="flex items-center gap-1 text-muted-foreground text-sm w-full flex-wrap">
+          <ReactionButtons
+            postId={post_id}
+            initialCounts={reaction_counts}
+            initialUserReaction={user_reaction}
+            onReactionToggled={onReactionToggled}
+          />
           <div className="flex items-center gap-1.5 sm:ml-auto">
             <Eye className="h-4 w-4" />
             <span>{view_count}</span>
@@ -204,7 +210,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
             className="flex-1 justify-center w-full"
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            {commentCount} Comments
+            {comment_count || 0} Comments
           </Button>
         </div>
       </CardFooter>

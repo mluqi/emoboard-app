@@ -12,25 +12,20 @@ export const size = {
 };
 export const contentType = "image/png";
 
-// Catatan: Fungsi ini diduplikasi dari page.jsx.
-// Untuk organisasi kode yang lebih baik, pertimbangkan untuk memindahkan ini ke file lib bersama (misalnya, /lib/posts.js)
-async function getPostData(postId) {
+async function getPostDataForOg(postId) {
   try {
     const { data, error } = await client
       .rpc("get_posts", {
         p_user_id: null,
         p_sort_by: "latest",
         p_mood: null,
+        p_requesting_user_id: null,
+        p_post_ids: null,
       })
       .eq("post_id", postId)
       .single();
-
     if (error) throw error;
-
-    if (data) {
-      return { ...data, comments: [{ count: data.comment_count }] };
-    }
-    return null;
+    return data;
   } catch (err) {
     console.error("Failed to fetch post for OG image:", err.message);
     return null;
@@ -38,7 +33,7 @@ async function getPostData(postId) {
 }
 
 export default async function Image({ params }) {
-  const post = await getPostData(params.post_id);
+  const post = await getPostDataForOg(params.post_id);
 
   if (!post) {
     return new Response("Post not found", { status: 404 });
@@ -73,17 +68,48 @@ export default async function Image({ params }) {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <h1 style={{ fontSize: "60px", fontWeight: 700, marginBottom: "20px" }}>
+            <h1
+              style={{
+                fontSize: "60px",
+                fontWeight: 700,
+                marginBottom: "20px",
+              }}
+            >
               {post.title}
             </h1>
-            <p style={{ fontSize: "32px", color: "#D1D5DB", whiteSpace: "pre-wrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {post.content.substring(0, 200) + (post.content.length > 200 ? "..." : "")}
+            <p
+              style={{
+                fontSize: "32px",
+                color: "#D1D5DB",
+                whiteSpace: "pre-wrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {post.content.substring(0, 200) +
+                (post.content.length > 200 ? "..." : "")}
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", fontSize: "28px", color: "#9CA3AF" }}>
-            {!post.is_anonymous && post.profile.avatar_url && <img src={post.profile.avatar_url} alt={post.profile.username} width="60" height="60" style={{ borderRadius: "50%", marginRight: "20px" }} />}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "28px",
+              color: "#9CA3AF",
+            }}
+          >
+            {!post.is_anonymous && post.profile.avatar_url && (
+              <img
+                src={post.profile.avatar_url}
+                alt={post.profile.username}
+                width="60"
+                height="60"
+                style={{ borderRadius: "50%", marginRight: "20px" }}
+              />
+            )}
             <span>
-              {post.is_anonymous ? "Anonymous" : `@${post.profile.username}`} on EmoBoard
+              {post.is_anonymous ? "Anonymous" : `@${post.profile.username}`} on
+              EmoBoard
             </span>
           </div>
         </div>
@@ -94,4 +120,3 @@ export default async function Image({ params }) {
     }
   );
 }
-

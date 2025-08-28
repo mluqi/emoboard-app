@@ -3,6 +3,7 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useAuth from "@/hooks/useAuth";
+import CommentSkeleton from "./CommentSkeleton";
 import { formatPostDate } from "@/lib/dateUtils";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,8 +46,13 @@ const CommentList = ({ postId, refreshTrigger }) => {
     fetchComments();
   }, [postId, refreshTrigger]);
 
-  if (loading)
-    return <p className="text-sm text-muted-foreground">Loading comments...</p>;
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(2)].map((_, i) => <CommentSkeleton key={i} />)}
+      </div>
+    );
+  }
   if (comments.length === 0)
     return <p className="text-sm text-muted-foreground">No comments yet.</p>;
 

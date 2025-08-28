@@ -9,17 +9,15 @@ async function getPostData(postId) {
         p_user_id: null,
         p_sort_by: 'latest',
         p_mood: null,
+        p_requesting_user_id: null, // Tidak diperlukan untuk render di server
+        p_post_ids: null,
       })
       .eq('post_id', postId)
       .single();
 
     if (error) throw error;
 
-    if (data) {
-      // Adaptasi struktur data agar sesuai dengan yang diharapkan PostCard
-      return { ...data, comments: [{ count: data.comment_count }] };
-    }
-    return null;
+    return data;
   } catch (err) {
     console.error("Failed to fetch post:", err.message);
     return null;

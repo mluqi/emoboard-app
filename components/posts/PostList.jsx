@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import client from "@/api/client";
 import { toast } from "sonner";
 import PostCard from "./PostCard";
+import PostCardSkeleton from "./PostCardSkeleton";
+import useAuth from "@/hooks/useAuth";
 
-const PostList = ({ userId, sortOption = 'latest', moodOption = 'all' }) => {
+const PostList = ({ userId, sortOption = "latest", moodOption = "all" }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   const handlePostDeleted = (deletedPostId) => {
     setPosts((currentPosts) =>
@@ -13,38 +16,41 @@ const PostList = ({ userId, sortOption = 'latest', moodOption = 'all' }) => {
     );
   };
 
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await client.rpc("get_posts", {
+        p_sort_by: sortOption,
+        p_mood: moodOption === "all" ? null : moodOption,
+        p_user_id: userId || null,
+        p_requesting_user_id: user?.id,
+        p_post_ids: null,
+      });
+
+      if (error) throw error;
+
+      setPosts(data || []);
+    } catch (error) {
+      toast.error("Failed to fetch posts: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await client.rpc('get_posts', {
-          p_sort_by: sortOption,
-          p_mood: moodOption === 'all' ? null : moodOption,
-          p_user_id: userId,
-        });
-
-        if (error) throw error;
-
-        // Adapt the data structure to match what PostCard expects
-        const formattedData = data.map(post => ({
-          ...post,
-          comments: [{ count: post.comment_count }]
-        }));
-
-        setPosts(formattedData);
-      } catch (error) {
-        toast.error("Failed to fetch posts: " + error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPosts();
+  }, [userId, sortOption, moodOption, user]);
 
-  }, [userId, sortOption, moodOption]);
+  if (loading) {
+    return (
+      <div className="w-full max-w-2xl space-y-6 mt-8">
+        {[...Array(3)].map((_, i) => (
+          <PostCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
-  if (loading)
-    return <p className="text-sm text-muted-foreground">Loading posts...</p>;
   if (posts.length === 0)
     return <p className="text-sm text-muted-foreground">No posts yet.</p>;
 
@@ -55,6 +61,7 @@ const PostList = ({ userId, sortOption = 'latest', moodOption = 'all' }) => {
           key={post.post_id}
           post={post}
           onPostDeleted={handlePostDeleted}
+          onReactionToggled={fetchPosts}
         />
       ))}
     </div>
