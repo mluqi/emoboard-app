@@ -17,8 +17,18 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const emotions = ["happy", "sad", "angry", "confused", "flat"];
+const colorPalette = [
+  "#f87171", // red-400
+  "#fb923c", // orange-400
+  "#facc15", // yellow-400
+  "#4ade80", // green-400
+  "#38bdf8", // lightBlue-400
+  "#818cf8", // indigo-400
+  "#c084fc", // purple-400
+];
 
 const AddPostForm = ({ onSuccess }) => {
   const { user } = useAuth();
@@ -34,6 +44,12 @@ const AddPostForm = ({ onSuccess }) => {
     if (!title.trim() || !content.trim()) {
       return toast.error("Title and content cannot be empty.");
     }
+    if (!emotion) {
+      return toast.error("Please select a feeling for your post.");
+    }
+    if (!colorTag) {
+      return toast.error("Please select a color tag for your post.");
+    }
     if (!user) {
       return toast.error("You must be logged in to create a post.");
     }
@@ -46,7 +62,7 @@ const AddPostForm = ({ onSuccess }) => {
         content: content.trim(),
         color_tag: colorTag,
         is_anonymous: isAnonymous,
-        emotion: emotion || null,
+        emotion: emotion,
       });
 
       if (error) throw error;
@@ -74,20 +90,23 @@ const AddPostForm = ({ onSuccess }) => {
           required
         />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <Label htmlFor="content">Content</Label>
         <Textarea
-          id="content"
+          name="content"
           placeholder="What's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          required
-          rows={6}
+          disabled={isSubmitting}
+          maxLength={1000}
         />
+        <p className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+          {content.length} / 1000
+        </p>
       </div>
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
         <div className="space-y-2">
-          <Label htmlFor="emotion">Feeling (Optional)</Label>
+          <Label htmlFor="emotion">Feeling</Label>
           <Select onValueChange={setEmotion} value={emotion}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select emotion" />
@@ -100,13 +119,26 @@ const AddPostForm = ({ onSuccess }) => {
               ))}
             </SelectContent>
           </Select>
-          <Input
-            name="color_tag"
-            placeholder="Color Tag (e.g., #ff0000)"
-            value={colorTag}
-            onChange={(e) => setColorTag(e.target.value)}
-            disabled={isSubmitting}
-          />
+          <div className="pt-2">
+            <Label>Color Tag</Label>
+            <div className="flex flex-wrap gap-2 pt-2">
+              {colorPalette.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setColorTag(color === colorTag ? "" : color)}
+                  className={cn(
+                    "h-7 w-7 rounded-full border-2 transition-all",
+                    colorTag === color
+                      ? "border-primary ring-2 ring-primary/50 ring-offset-2 ring-offset-background"
+                      : "border-muted hover:border-muted-foreground"
+                  )}
+                  style={{ backgroundColor: color }}
+                  aria-label={`Select color ${color}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
         <div className="flex items-center space-x-2 pt-2 sm:pt-8">
           <Switch

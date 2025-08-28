@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/context/AuthProvider";
 import { Toaster } from "sonner";
 import Header from "@/app/(private)/components/Header";
 import MobileBottomNavbar from "@/components/layout/MobileBottomNavbar";
+import Footer from "@/components/layout/Footer";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -34,9 +35,12 @@ export default function RootLayout({ children }) {
           enableSystem
         >
           <AuthProvider>
-            <Header />
-            <main>{children}</main>
-            <MobileBottomNavbar />
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main>{children}</main>
+              <MobileBottomNavbar />
+              <Footer />
+            </div>
           </AuthProvider>
           <Toaster />
         </ThemeProvider>

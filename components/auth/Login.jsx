@@ -37,7 +37,7 @@ const Login = () => {
       }
 
       if (data.user) {
-        toast.success("Login Successful! Redirecting...");
+        toast.success("Login Successful!");
         // The onAuthStateChange listener will handle the redirect, but a manual push can be faster.
         router.push("/dashboard");
       }

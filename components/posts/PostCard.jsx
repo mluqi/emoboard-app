@@ -45,7 +45,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
   const cardRef = React.useRef(null);
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(isDetailPage);
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(isDetailPage);
   const isAuthor = user && user.id === post.user_id;
 
   useEffect(() => {
@@ -214,7 +214,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
           </Button>
         </div>
       </CardFooter>
-      {commentsOpen && <CommentSection postId={post_id} />}
+      {commentsOpen && <CommentSection postId={post_id} isPostAnonymous={is_anonymous} />}
     </Card>
   );
 };

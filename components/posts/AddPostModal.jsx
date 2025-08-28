@@ -27,7 +27,7 @@ const AddPostModal = ({ isOpen, onOpenChange, onPostCreated}) => {
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create a new post</DialogTitle>
+          <DialogTitle>Create a new Emo</DialogTitle>
           <DialogDescription>Share your thoughts with the community. Your post will appear on the feed.</DialogDescription>
         </DialogHeader>
         <AddPostForm onSuccess={handleSuccess} />
