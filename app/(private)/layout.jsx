@@ -3,8 +3,8 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/Loader";
-import MobileBottomNavbar from "@/components/layout/MobileBottomNavbar";
-import Header from "./components/Header";
+// import MobileBottomNavbar from "@/components/layout/MobileBottomNavbar";
+// import Header from "./components/Header";
 
 import useAuth from "@/hooks/useAuth";
 
@@ -23,10 +23,10 @@ const PrivatePagesLayout = ({ children }) => {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 pb-20 md:pb-0">{children}</main>
-      <MobileBottomNavbar />
+    <div>
+      {/* <Header /> */}
+      {children}
+      {/* <MobileBottomNavbar /> */}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { PlusSquare, Menu, X, User, LogOut, Heart, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
 import client from "@/api/client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 
@@ -14,6 +14,7 @@ const Header = () => {
   const { user, profile } = useAuth();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await client.auth.signOut();
@@ -21,22 +22,29 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  // Jangan tampilkan header di halaman login/register
+  if (pathname === "/" || pathname === "/") {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container flex h-14 md:h-16 mx-auto px-4 justify-between items-center">
         {/* Desktop Navigation (Left) - Empty for centering */}
         <div className="hidden md:flex items-center gap-3 w-28 justify-start">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="md:hidden lg:flex"
-          >
-            <Link href="/post/create">
-              <PlusSquare className="h-4 w-4 mr-2" />
-              Create
-            </Link>
-          </Button>
+          {user && (
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="md:hidden lg:flex"
+            >
+              <Link href="/post/create">
+                <PlusSquare className="h-4 w-4 mr-2" />
+                Create
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Logo (Centered on all devices) */}
@@ -59,12 +67,14 @@ const Header = () => {
               </Link>
             </Button>
           )}
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/reacted">
-              <Heart className="h-4 w-4" />
-              <span className="sr-only">Reacted Posts</span>
-            </Link>
-          </Button>
+          {user && (
+            <Button asChild variant="ghost" size="icon">
+              <Link href="/reacted">
+                <Heart className="h-4 w-4" />
+                <span className="sr-only">Reacted Posts</span>
+              </Link>
+            </Button>
+          )}
           <NotificationBell />
           <ThemeSwitcher />
           <Button onClick={handleLogout} variant="ghost" size="icon">

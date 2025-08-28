@@ -3,54 +3,63 @@
 import React, { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusSquare, User, Bell } from "lucide-react";
+import { Home, PlusSquare, User, Bell, LogIn } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 const MobileBottomNavbar = () => {
   const pathname = usePathname();
-    const { profile, notifications } = useAuth();
+  const { user, profile, notifications } = useAuth();
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
+  const navLinks = user && profile
+    ? [
+        { href: "/dashboard", icon: Home, label: "Home" },
+        { href: "/post/create", icon: PlusSquare, label: "Post" },
+        { href: "/notifications", icon: Bell, label: "Notifications" },
+        { href: `/profile/${profile.username}`, icon: User, label: "Profile" },
+      ]
+    : [
+        { href: "/dashboard", icon: Home, label: "Home" },
+        { href: "", icon: LogIn, label: "Login" },
+      ];
 
-  if (!profile) return null;
-
-  const navLinks = [
-    { href: "/dashboard", icon: Home, label: "Home" },
-    { href: "/post/create", icon: PlusSquare, label: "Post" },
-    { href: "/notifications", icon: Bell, label: "Notifications" },
-    { href: `/profile/${profile.username}`, icon: User, label: "Profile" },
-  ];
+  // Jangan tampilkan navbar di halaman login/register
+  if (pathname === '/' || pathname === '/') {
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-4 mx-auto">
+    <div className="fixed bottom-0 left-0 z-50 w-full h-14 bg-background/90 backdrop-blur-md border-t md:hidden">
+      <div className="flex h-full justify-around items-center px-2">
         {navLinks.map(({ href, icon: Icon, label }) => (
           <Link
             key={href}
             href={href}
             className={cn(
-              "inline-flex flex-col items-center justify-center px-5 font-medium hover:bg-accent group",
-              pathname === href ? "text-primary" : "text-muted-foreground"
+              "inline-flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors",
+              pathname === href
+                ? "text-primary bg-primary/10"
+                : "text-muted-foreground hover:text-foreground"
             )} 
           >
-            <div className="relative pt-1">
+            <div className="relative">
               {label === "Profile" && profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
                   alt="Profile"
-                  className="w-6 h-6 mb-1 rounded-full object-cover"
+                  className="w-5 h-5 rounded-full object-cover"
                 />
               ) : (
-                <Icon className="w-6 h-6 mb-1" />
+                <Icon className="w-5 h-5" />
               )}
               {label === "Notifications" && unreadCount > 0 && (
-                <span className="absolute top-0 right-0 flex h-4 w-4 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
             </div>
-            <span className="text-xs">{label}</span>
+            <span className="text-xs mt-1">{label}</span>
           </Link>
         ))}
       </div>

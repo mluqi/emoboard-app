@@ -5,6 +5,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { AuthProvider } from "@/components/context/AuthProvider";
 import { Toaster } from "sonner";
+import Header from "@/app/(private)/components/Header";
+import MobileBottomNavbar from "@/components/layout/MobileBottomNavbar";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -31,7 +33,11 @@ export default function RootLayout({ children }) {
           defaultTheme="system"
           enableSystem
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
+            <MobileBottomNavbar />
+          </AuthProvider>
           <Toaster />
         </ThemeProvider>
       </body>
