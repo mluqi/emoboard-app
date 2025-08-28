@@ -21,7 +21,7 @@ const DashboardPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
       <div className="w-full max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6">Home Feed</h1>
+        {/* <h1 className="text-3xl font-bold mb-6">Home Feed</h1> */}
         <PostFilters
           sortOption={sortOption}
           moodOption={moodOption}

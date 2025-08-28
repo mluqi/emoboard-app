@@ -3,6 +3,7 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useAuth from "@/hooks/useAuth";
+import { formatPostDate } from "@/lib/dateUtils";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -76,9 +77,16 @@ const CommentList = ({ postId, refreshTrigger }) => {
               </AvatarFallback>
             </Avatar>
             <div className="bg-muted p-3 rounded-lg w-full">
-              <p className="text-sm font-semibold">
-                {!comment.is_anonymous ? comment.profile?.username || "User" : "Anonymous"}
-              </p>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-sm font-semibold">
+                  {!comment.is_anonymous
+                    ? comment.profile?.username || "User"
+                    : "Anonymous"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {formatPostDate(comment.created_at)}
+                </p>
+              </div>
               <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
             </div>
             {isAuthor && (

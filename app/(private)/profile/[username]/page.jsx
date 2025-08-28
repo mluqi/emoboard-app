@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import client from "@/api/client";
 import { toast } from "sonner";
+import BackButton from "@/components/common/BackButton";
 import Loader from "@/components/ui/Loader";
 import PostList from "@/components/posts/PostList";
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -55,6 +56,9 @@ const ProfilePage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
       <div className="w-full max-w-2xl">
+        <div className="mb-4">
+          <BackButton />
+        </div>
         <ProfileHeader profile={profile} />
         <div className="mt-8 border-t pt-8">
           <h2 className="text-2xl font-bold mb-6">

@@ -2,6 +2,7 @@
 
 import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { AuthProvider } from "@/components/context/AuthProvider";
 import { Toaster } from "sonner";
 
@@ -23,10 +24,16 @@ const nunito = Nunito({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body className={`${nunitoSans.variable} ${nunito.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+        >
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

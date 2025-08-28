@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import client from "@/api/client";
 import { toast } from "sonner";
 import Loader from "@/components/ui/Loader";
+import BackButton from "@/components/common/BackButton";
 import EditProfileForm from "@/components/profile/EditProfileForm";
 import useAuth from "@/hooks/useAuth";
 
@@ -66,6 +67,9 @@ const EditProfilePage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
       <div className="w-full max-w-lg">
+        <div className="mb-4">
+          <BackButton>Back to Profile</BackButton>
+        </div>
         <h1 className="text-3xl font-bold mb-6 text-center">Edit Profile</h1>
         <EditProfileForm
           profile={profile}

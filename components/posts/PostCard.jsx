@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  // ... (komponen Card lainnya)
   Card,
   CardContent,
   CardHeader,
@@ -22,6 +23,7 @@ import {
 import useAuth from "@/hooks/useAuth";
 import client from "@/api/client";
 import { toast } from "sonner";
+import { formatPostDate } from "@/lib/dateUtils";
 import DeleteConfirmationDialog from "../common/DeleteConfirmationDialog";
 
 const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
@@ -42,7 +44,6 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(isDetailPage);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const postDate = new Date(created_at).toLocaleString();
   const isAuthor = user && user.id === post.user_id;
   const commentCount = comments[0]?.count || 0;
 
@@ -85,7 +86,9 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
           </Avatar>
           <div>
             <p className="text-sm font-semibold leading-none">Anonymous</p>
-            <p className="text-xs text-muted-foreground">{postDate}</p>
+            <p className="text-xs text-muted-foreground">
+              {formatPostDate(created_at)}
+            </p>
           </div>
         </div>
       );
@@ -106,7 +109,9 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false }) => {
           <p className="text-sm font-semibold leading-none">
             {profile?.username || "User"}
           </p>
-          <p className="text-xs text-muted-foreground">{postDate}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatPostDate(created_at)}
+          </p>
         </div>
       </Link>
     );

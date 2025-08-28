@@ -40,7 +40,7 @@ const CreateComment = ({ postId, onCommentAdded }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-2">
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2 pt-4">
         <Textarea
           name="content"
           placeholder="Write a comment..."

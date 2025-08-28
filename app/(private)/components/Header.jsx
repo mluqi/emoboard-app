@@ -8,6 +8,7 @@ import useAuth from "@/hooks/useAuth";
 import client from "@/api/client";
 import { useRouter } from "next/navigation";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 
 const Header = () => {
   const { user, profile } = useAuth();
@@ -29,7 +30,9 @@ const Header = () => {
         <div className="flex flex-1 items-center justify-end space-x-4 hidden md:flex sm:space-x-0 lg:space-x-4">
           <nav className="flex items-center space-x-2">
             <Button asChild>
-              <Link href="/post/create"><PlusSquare className="mr-2 h-4 w-4" /> Create Post</Link>
+              <Link href="/post/create">
+                <PlusSquare className="mr-2 h-4 w-4" /> Create Post
+              </Link>
             </Button>
             {user && profile && (
               <Button asChild variant="ghost">
@@ -37,8 +40,14 @@ const Header = () => {
               </Button>
             )}
             <NotificationBell />
-            <Button onClick={handleLogout}>Logout</Button>
+            <Button onClick={handleLogout} variant="outline">
+              Logout
+            </Button>
           </nav>
+          <ThemeSwitcher />
+        </div>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeSwitcher />
         </div>
       </div>
     </header>

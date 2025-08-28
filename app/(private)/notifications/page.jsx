@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
+import BackButton from "@/components/common/BackButton";
 import Loader from "@/components/ui/Loader";
 import NotificationItem from "@/components/notifications/NotificationItem";
 import client from "@/api/client";
@@ -36,6 +37,9 @@ const NotificationsPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
       <div className="w-full max-w-2xl">
+        <div className="mb-4">
+          <BackButton />
+        </div>
         <h1 className="text-3xl font-bold mb-6">Notifications</h1>
         <div className="space-y-2 rounded-lg border p-2">
           {notifications.length > 0 ? (
