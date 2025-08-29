@@ -25,6 +25,7 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
     profile.avatar_url || null
   );
   const [uploading, setUploading] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
 
   const handleAvatarChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -32,6 +33,17 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
     }
+  };
+
+  const validateUsername = (username) => {
+    if (username.includes(" ")) {
+      return "Username tidak boleh mengandung spasi.";
+    }
+    if (username.length < 3) {
+      return "Username harus memiliki setidaknya 3 karakter.";
+    }
+    // Anda dapat menambahkan validasi lain di sini, seperti memeriksa karakter yang diizinkan.
+    return "";
   };
 
   const handleSubmit = async (e) => {
@@ -83,6 +95,11 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
     }
   };
 
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    setUsernameError(validateUsername(e.target.value));
+  };
+
   return (
     <Card>
       <form onSubmit={handleSubmit}>
@@ -116,10 +133,13 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
             <Input
               id="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={handleUsernameChange}
               required
               disabled={uploading}
             />
+            {usernameError && (
+              <p className="text-sm text-red-500">{usernameError}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
@@ -132,7 +152,11 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={uploading} className="w-full mt-4">
+          <Button
+            type="submit"
+            disabled={uploading || usernameError}
+            className="w-full mt-4"
+          >
             {uploading ? "Saving..." : "Save Changes"}
           </Button>
         </CardFooter>
