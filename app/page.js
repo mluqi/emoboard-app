@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Auth from "@/components/auth/Auth";
-import Loader from "@/components/ui/Loader";
+import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -17,7 +17,7 @@ export default function Home() {
   }, [user, loading, router]);
 
   if (loading || user) {
-    return <Loader />;
+    return <EmoBoardLoader />;
   }
 
   return (

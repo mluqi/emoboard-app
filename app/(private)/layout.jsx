@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Loader from "@/components/ui/Loader";
+import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 // import MobileBottomNavbar from "@/components/layout/MobileBottomNavbar";
 // import Header from "./components/Header";
 
@@ -19,7 +19,7 @@ const PrivatePagesLayout = ({ children }) => {
   }, [user, loading]);
 
   if (loading || !user) {
-    return <Loader />;
+    return <EmoBoardLoader />;
   }
 
   return (

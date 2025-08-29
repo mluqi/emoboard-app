@@ -25,13 +25,12 @@ async function getPostData(postId) {
 }
 
 export async function generateMetadata({ params }) {
-  const post = await getPostData(params.post_id);
-
-  if (!post) {
+  if(!params.post_id){
     return {
       title: "Post Not Found",
     };
   }
+  const post = await getPostData(params.post_id);
 
   const siteName = "EmoBoard";
   const title = `${post.title} | ${siteName}`;

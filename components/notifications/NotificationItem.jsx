@@ -7,6 +7,7 @@ const NotificationItem = ({ notification }) => {
   const { actor, type, post, is_read } = notification;
 
   const notificationText = {
+    mention: "mentioned you in a post:",
     new_comment: "commented on your post:",
     new_reaction: "reacted to your post:",
   };

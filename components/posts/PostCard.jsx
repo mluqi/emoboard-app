@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Eye, MessageSquare, MoreHorizontal, Trash2 } from "lucide-react";
 import CommentSection from "../comments/CommentSection";
@@ -47,6 +48,26 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
   const [isExpanded, setIsExpanded] = useState(isDetailPage);
   const [commentsOpen, setCommentsOpen] = useState(isDetailPage);
   const isAuthor = user && user.id === post.user_id;
+  const router = useRouter();
+
+  const handleCardClick = (e) => {
+    if (isDetailPage) return;
+
+    // Jangan navigasi jika elemen interaktif (link, tombol, dll.) yang diklik.
+    if (
+      e.target.closest('a, button, [role="button"], [data-radix-collection-item]')
+    ) {
+      return;
+    }
+
+    // Jangan navigasi jika pengguna sedang menyeleksi teks
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return;
+    }
+
+    router.push(`/post/${post_id}`);
+  };
 
   useEffect(() => {
     // Panggil fungsi RPC untuk menaikkan view count saat komponen post ditampilkan.
@@ -118,30 +139,43 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
     );
   };
 
-  const ContentWrapper = ({ children }) => {
-    if (isDetailPage) {
-      return <div>{children}</div>;
-    }
-    return <Link href={`/post/${post_id}`}>{children}</Link>;
+  const renderContentWithMentions = (text) => {
+    if (!text) return text;
+    // Regex untuk membagi teks berdasarkan mention (@username)
+    const parts = text.split(/(@\w+)/g);
+
+    return parts.map((part, index) => {
+      if (part.startsWith("@")) {
+        const username = part.substring(1);
+        return (
+          <Link
+            key={index}
+            href={`/profile/${username}`}
+            className="text-primary hover:underline font-semibold"
+          >
+            {part}
+          </Link>
+        );
+      }
+      return part;
+    });
   };
 
   const contentBody = (
     <CardContent>
       <CardTitle className="mb-2">{title}</CardTitle>
       <p className="whitespace-pre-wrap">
-        {content.length > 480 && !isExpanded
-          ? `${content.substring(0, 480)}...`
-          : content}
+        {renderContentWithMentions(
+          content.length > 480 && !isExpanded
+            ? `${content.substring(0, 480)}...`
+            : content
+        )}
       </p>
       {content.length > 480 && !isDetailPage && (
         <Button
           variant="link"
           className="p-0 h-auto mt-2 text-primary"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setIsExpanded(!isExpanded);
-          }}
+          onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? "Show less" : "Read more"}
         </Button>
@@ -156,8 +190,11 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
     <Card
       id={post_id}
       style={{ borderLeft: `4px solid ${color_tag || "transparent"}` }}
-      className="scroll-mt-20 bg-card"
+      className={`scroll-mt-20 bg-card ${
+        !isDetailPage ? "cursor-pointer hover:bg-muted/50 transition-colors" : ""
+      }`}
       ref={cardRef}
+      onClick={!isDetailPage ? handleCardClick : undefined}
     >
       <CardHeader className="flex flex-row items-center gap-4 pb-4">
         <PostAuthor />
@@ -187,7 +224,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
           )}
         </div>
       </CardHeader>
-      <ContentWrapper>{contentBody}</ContentWrapper>
+      {contentBody}
       <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t pt-4 pb-2">
         <div className="flex items-center gap-1 text-muted-foreground text-sm w-full flex-wrap">
           <ReactionButtons

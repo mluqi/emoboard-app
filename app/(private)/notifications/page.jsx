@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import BackButton from "@/components/common/BackButton";
-import Loader from "@/components/ui/Loader";
+import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 import NotificationItem from "@/components/notifications/NotificationItem";
 import client from "@/api/client";
 
@@ -32,7 +32,7 @@ const NotificationsPage = () => {
     markAllAsRead();
   }, [user, unreadCount, fetchNotifications]);
 
-  if (loading) return <Loader />;
+  if (loading) return <EmoBoardLoader />;
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">

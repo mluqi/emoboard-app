@@ -6,7 +6,7 @@ import client from "@/api/client";
 import { toast } from "sonner";
 import BackButton from "@/components/common/BackButton";
 import useAuth from "@/hooks/useAuth";
-import Loader from "@/components/ui/Loader";
+import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 import PostList from "@/components/posts/PostList";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 
@@ -86,7 +86,7 @@ const ProfilePage = () => {
     );
   };
 
-  if (loading) return <Loader />;
+  if (loading) return <EmoBoardLoader />;
   if (error)
     return <div className="text-center text-destructive p-8">{error}</div>;
   if (!profile)

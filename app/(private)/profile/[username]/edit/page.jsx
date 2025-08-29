@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import client from "@/api/client";
 import { toast } from "sonner";
-import Loader from "@/components/ui/Loader";
+import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 import BackButton from "@/components/common/BackButton";
 import EditProfileForm from "@/components/profile/EditProfileForm";
 import useAuth from "@/hooks/useAuth";
@@ -60,7 +60,7 @@ const EditProfilePage = () => {
     router.push(`/profile/${newUsername}`);
   };
 
-  if (loading || authLoading || !profile) return <Loader />;
+  if (loading || authLoading || !profile) return <EmoBoardLoader />;
   if (error)
     return <div className="text-center text-destructive p-8">{error}</div>;
 
