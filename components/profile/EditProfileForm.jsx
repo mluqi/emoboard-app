@@ -89,7 +89,9 @@ const EditProfileForm = ({ profile, onProfileUpdated }) => {
         <CardHeader className="items-center">
           <Avatar className="h-24 w-24 border-2 mb-4">
             <AvatarImage src={avatarPreview} alt={username} />
-            <AvatarFallback>{username?.[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>
+              {username ? username[0]?.toUpperCase() : ""}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center w-full mb-4 text-center border p-2 rounded-md">
             <Label
