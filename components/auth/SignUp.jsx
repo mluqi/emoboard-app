@@ -6,19 +6,20 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 
 import client from "@/api/client";
+import useAuth from "@/hooks/useAuth";
 
 const SignUp = () => {
+  const { startProcessingAuth, stopProcessingAuth, isProcessingAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    startProcessingAuth();
 
     if (!email || !password) {
       toast.error("Please fill all the fields");
-      setLoading(false);
+      stopProcessingAuth();
       return;
     }
 
@@ -30,16 +31,16 @@ const SignUp = () => {
 
       if (error) {
         toast.error(error.message);
+        stopProcessingAuth();
         return;
       }
 
       if (data.user) {
         toast.success("Sign Up Successful! Please check your email for verification.");
+        stopProcessingAuth(); // Stop loader after success message for sign up
       }
     } catch (err) {
       toast.error("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -57,7 +58,7 @@ const SignUp = () => {
                 placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
+                disabled={isProcessingAuth}
               />
             </div>
             <div className="grid gap-2">
@@ -68,11 +69,11 @@ const SignUp = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
+                disabled={isProcessingAuth}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing up..." : "Sign Up"}
+            <Button type="submit" className="w-full" disabled={isProcessingAuth}>
+              Sign Up
             </Button>
           </div>
         </form>

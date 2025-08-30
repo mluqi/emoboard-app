@@ -3,7 +3,7 @@
 import React, { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusSquare, User, Bell, LogIn } from "lucide-react";
+import { Home, PlusSquare, User, Bell, LogIn, SmileIcon } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,8 @@ const MobileBottomNavbar = () => {
     ? [
         { href: "/dashboard", icon: Home, label: "Home" },
         { href: "/post/create", icon: PlusSquare, label: "Post" },
-        { href: "/notifications", icon: Bell, label: "Notifications" },
+        // { href: "/notifications", icon: Bell, label: "Notifications" },
+        { href: "/reacted", icon: SmileIcon, label: "Reacted" },
         { href: `/profile/${profile.username}`, icon: User, label: "Profile" },
       ]
     : [
@@ -39,7 +40,7 @@ const MobileBottomNavbar = () => {
             className={cn(
               "inline-flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors",
               pathname === href
-                ? "text-primary bg-primary/10"
+                ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
             )} 
           >

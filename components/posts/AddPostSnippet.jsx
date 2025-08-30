@@ -16,7 +16,7 @@ const AddPostSnippet = ({onPostCreated}) => {
   return (
     <>
       <div
-        className="w-full max-w-2xl mx-auto mb-6 flex items-center gap-4 p-3 bg-card border rounded-lg cursor-pointer hover:bg-muted transition-colors"
+        className="w-full max-w-2xl mx-auto mb-6 flex items-center gap-4 p-3 bg-card rounded-lg cursor-pointer hover:bg-muted transition-colors shadow-sm"
         onClick={() => setIsModalOpen(true)}
       >
         <Avatar className="h-10 w-10 border">

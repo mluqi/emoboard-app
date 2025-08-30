@@ -7,20 +7,21 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 
 import client from "@/api/client";
+import useAuth from "@/hooks/useAuth";
 
 const Login = () => {
+  const { startProcessingAuth, stopProcessingAuth, isProcessingAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    startProcessingAuth();
 
     if (!email || !password) {
       toast.error("Please fill all the fields");
-      setLoading(false);
+      stopProcessingAuth();
       return;
     }
 
@@ -32,19 +33,16 @@ const Login = () => {
 
       if (error) {
         toast.error(error.message || "Unable to Login. Please try again.");
-        setLoading(false); // Ensure loading stops on error
+        stopProcessingAuth();
         return;
       }
 
       if (data.user) {
         toast.success("Login Successful!");
-        // The onAuthStateChange listener will handle the redirect, but a manual push can be faster.
-        router.push("/dashboard");
+        // The onAuthStateChange listener in AuthProvider will handle the redirect and stop the loader.
       }
     } catch (err) {
       toast.error("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -62,7 +60,7 @@ const Login = () => {
                 placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
+                disabled={isProcessingAuth}
               />
             </div>
             <div className="grid gap-2">
@@ -73,11 +71,11 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
+                disabled={isProcessingAuth}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+            <Button type="submit" className="w-full" disabled={isProcessingAuth}>
+              Login
             </Button>
           </div>
         </form>

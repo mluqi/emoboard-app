@@ -151,7 +151,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
           <Link
             key={index}
             href={`/profile/${username}`}
-            className="text-primary hover:underline font-semibold"
+            className="text-primary hover:text-blue-300 transition-colors font-semibold"
           >
             {part}
           </Link>
@@ -190,7 +190,7 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
     <Card
       id={post_id}
       style={{ borderLeft: `4px solid ${color_tag || "transparent"}` }}
-      className={`scroll-mt-20 bg-card ${
+      className={`scroll-mt-20 bg-card border-none shadow-lg ${
         !isDetailPage ? "cursor-pointer hover:bg-muted/50 transition-colors" : ""
       }`}
       ref={cardRef}

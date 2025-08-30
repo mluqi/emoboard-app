@@ -2,6 +2,8 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import client from "@/api/client";
 
+import { toast } from "sonner";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -9,6 +11,7 @@ const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isProcessingAuth, setIsProcessingAuth] = useState(false);
 
   const fetchProfile = useCallback(async (userId) => {
     if (!userId) {
@@ -65,6 +68,7 @@ const AuthProvider = ({ children }) => {
       fetchProfile(currentUser?.id);
       fetchNotifications(currentUser?.id);
       if (e === "SIGNED_IN" || e === "SIGNED_OUT" || e === "USER_UPDATED") {
+        setIsProcessingAuth(false); // Reset saat auth state berubah
         setLoading(false);
       }
     });
@@ -102,7 +106,17 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, loading, fetchProfile, notifications, fetchNotifications }}
+      value={{
+        user,
+        profile,
+        loading,
+        isProcessingAuth,
+        fetchProfile,
+        notifications,
+        fetchNotifications,
+        startProcessingAuth: () => setIsProcessingAuth(true),
+        stopProcessingAuth: () => setIsProcessingAuth(false),
+      }}
     >
       {children}
     </AuthContext.Provider>

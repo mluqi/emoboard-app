@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 
 const PostCardSkeleton = () => {
   return (
-    <Card>
+    <Card className={"scroll-mt-20 bg-card border-none shadow-none"}>
       <CardHeader className="flex flex-row items-center gap-4 pb-4">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex flex-col gap-2">

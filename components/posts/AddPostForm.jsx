@@ -42,6 +42,7 @@ const AddPostForm = ({ onSuccess }) => {
   const [mentionSuggestions, setMentionSuggestions] = useState([]);
   const [isMentioning, setIsMentioning] = useState(false);
   const textareaRef = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
@@ -149,17 +150,37 @@ const AddPostForm = ({ onSuccess }) => {
         </div>
         <div className="space-y-2">
           <Label htmlFor="content">Content</Label>
-          <Textarea
-            ref={textareaRef}
-            id="content"
-            name="content"
-            placeholder="What's on your mind? Type @ to mention someone."
-            value={content}
-            onChange={handleContentChange}
-            disabled={isSubmitting}
-            maxLength={1000}
-            className="min-h-[120px]"
-          />
+          {/* Bungkus Textarea dan dropdown dalam div 'relative' */}
+          <div className="relative">
+            <Textarea
+              ref={textareaRef}
+              id="content"
+              name="content"
+              placeholder="What's on your mind? Type @ to mention someone."
+              value={content}
+              onChange={handleContentChange}
+              disabled={isSubmitting}
+              maxLength={1000}
+              className="min-h-[120px]"
+            />
+            {/* Pindahkan dropdown ke sini */}
+            {isMentioning && mentionSuggestions.length > 0 && (
+              <div className="absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md mt-1">
+                <ul className="p-1">
+                  {mentionSuggestions.map((suggestion) => (
+                    <li
+                      key={suggestion.username}
+                      className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
+                      onClick={() => handleSuggestionClick(suggestion.username)}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      {suggestion.username}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           <p className="text-right text-xs text-muted-foreground">
             {content.length} / 1000
           </p>
@@ -219,22 +240,6 @@ const AddPostForm = ({ onSuccess }) => {
           </Button>
         </div>
       </form>
-      {isMentioning && mentionSuggestions.length > 0 && (
-        <div className="absolute z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md -mt-16">
-          <ul className="p-1">
-            {mentionSuggestions.map((suggestion) => (
-              <li
-                key={suggestion.username}
-                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
-                onClick={() => handleSuggestionClick(suggestion.username)}
-                onMouseDown={(e) => e.preventDefault()} // Prevent textarea from losing focus
-              >
-                {suggestion.username}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import useAuth from "@/hooks/useAuth";
 import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 import PostList from "@/components/posts/PostList";
 import ProfileHeader from "@/components/profile/ProfileHeader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -17,6 +18,9 @@ const ProfilePage = () => {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("posts");
+  const [mentionedPosts, setMentionedPosts] = useState([]);
+  const [mentionedPostsLoading, setMentionedPostsLoading] = useState(false);
 
   useEffect(() => {
     if (!username) return;
@@ -74,11 +78,33 @@ const ProfilePage = () => {
     }
   }, [profile?.id, user?.id]);
 
+  const fetchMentionedPosts = useCallback(async () => {
+    if (!profile?.id) return;
+    setMentionedPostsLoading(true);
+    try {
+      const { data, error } = await client.rpc("get_mentioned_posts", {
+        p_user_id: profile.id,
+        p_requesting_user_id: user?.id || null,
+      });
+
+      if (error) throw error;
+      setMentionedPosts(data || []);
+    } catch (error) {
+      toast.error("Failed to fetch mentioned posts: " + error.message);
+    } finally {
+      setMentionedPostsLoading(false);
+    }
+  }, [profile?.id, user?.id]);
+
   useEffect(() => {
     if (profile) {
-      fetchPosts();
+      if (activeTab === "posts") {
+        fetchPosts();
+      } else if (activeTab === "mentions") {
+        fetchMentionedPosts();
+      }
     }
-  }, [profile, fetchPosts]);
+  }, [profile, activeTab, fetchPosts, fetchMentionedPosts]);
 
   const handlePostDeleted = (deletedPostId) => {
     setPosts((currentPosts) =>
@@ -99,17 +125,38 @@ const ProfilePage = () => {
           <BackButton />
         </div>
         <ProfileHeader profile={profile} />
-        <div className="mt-8 border-t pt-8">
-          <h2 className="text-2xl font-bold mb-6">
-            Posts by {profile.username}
-          </h2>
-          <PostList
-            posts={posts}
-            loading={postsLoading}
-            onPostDeleted={handlePostDeleted}
-            onReactionToggled={fetchPosts}
-          />
-        </div>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="mt-6 w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="mentions">Mentions</TabsTrigger>
+          </TabsList>
+          <TabsContent value="posts" className="mt-6">
+            <PostList
+              posts={posts}
+              loading={postsLoading}
+              onPostDeleted={handlePostDeleted}
+              onReactionToggled={fetchPosts}
+              emptyMessage={`@${username} hasn't posted anything yet.`}
+            />
+          </TabsContent>
+          <TabsContent value="mentions" className="mt-6">
+            <PostList
+              posts={mentionedPosts}
+              loading={mentionedPostsLoading}
+              onPostDeleted={(id) => {
+                setMentionedPosts((prev) =>
+                  prev.filter((p) => p.post_id !== id)
+                );
+              }}
+              onReactionToggled={fetchMentionedPosts}
+              emptyMessage={`@${username} hasn't been mentioned in any posts yet.`}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

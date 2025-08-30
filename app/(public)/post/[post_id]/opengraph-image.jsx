@@ -20,9 +20,8 @@ async function getPostDataForOg(postId) {
         p_sort_by: "latest",
         p_mood: null,
         p_requesting_user_id: null,
-        p_post_ids: null,
+        p_post_ids: [postId],
       })
-      .eq("post_id", postId)
       .single();
     if (error) throw error;
     return data;
@@ -33,7 +32,8 @@ async function getPostDataForOg(postId) {
 }
 
 export default async function Image({ params }) {
-  const post = await getPostDataForOg(params.post_id);
+  const {post_id} = await params;
+  const post = await getPostDataForOg(post_id);
 
   if (!post) {
     return new Response("Post not found", { status: 404 });

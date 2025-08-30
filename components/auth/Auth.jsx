@@ -14,8 +14,12 @@ const Auth = () => {
           </span>
         </h1>
       </div>
-      <p className="text-muted-foreground max-w-sm">
-        Welcome back! Log in or create an account to share your thoughts.
+      <p className="text-lg text-muted-foreground max-w-sm">
+        A safe space to{" "}
+        <span className="font-semibold bg-gradient-to-r from-gray-800 to-gray-200 bg-clip-text text-transparent">
+          share your thoughts
+        </span>{" "}
+        and feelings, publicly or anonymously.
       </p>
       <Tabs defaultValue="login" className="w-[350px] sm:w-[400px] mt-4">
         <TabsList className="grid w-full grid-cols-2">

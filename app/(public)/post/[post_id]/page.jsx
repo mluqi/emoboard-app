@@ -10,9 +10,8 @@ async function getPostData(postId) {
         p_sort_by: 'latest',
         p_mood: null,
         p_requesting_user_id: null, // Tidak diperlukan untuk render di server
-        p_post_ids: null,
+        p_post_ids: [postId],
       })
-      .eq('post_id', postId)
       .single();
 
     if (error) throw error;
@@ -25,12 +24,13 @@ async function getPostData(postId) {
 }
 
 export async function generateMetadata({ params }) {
-  if(!params.post_id){
+  const { post_id } = await params;
+  if(!post_id){
     return {
       title: "Post Not Found",
     };
   }
-  const post = await getPostData(params.post_id);
+  const post = await getPostData(post_id);
 
   const siteName = "EmoBoard";
   const title = `${post.title} | ${siteName}`;
@@ -57,7 +57,9 @@ export async function generateMetadata({ params }) {
 }
 
 const PostDetailPage = async ({ params }) => {
-  const post = await getPostData(params.post_id);
+  const { post_id } = await params;
+  
+  const post = await getPostData(post_id);
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Bell } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -11,12 +12,17 @@ import {
 import useAuth from "@/hooks/useAuth";
 import NotificationItem from "./NotificationItem";
 import client from "@/api/client";
+import Link from "next/link";
 
 const NotificationBell = () => {
+  const pathname = usePathname();
   const { notifications, fetchNotifications, user } = useAuth();
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
+  const isNotificationsPage = pathname === "/notifications";
+
   const handleOpenChange = async (open) => {
+    if (isNotificationsPage) return;
     if (open && unreadCount > 0) {
       // Mark all as read
       const { error } = await client
@@ -34,8 +40,8 @@ const NotificationBell = () => {
   };
 
   return (
-    <Popover onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
+    <Popover onOpenChange={handleOpenChange} >
+      <PopoverTrigger asChild disabled={isNotificationsPage}>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -61,6 +67,12 @@ const NotificationBell = () => {
             </p>
           )}
         </div>
+        <Link
+          href="/notifications"
+          className="flex justify-end p-2 text-sm text-primary/80 hover:text-primary"
+        >
+          see all notifications
+        </Link>
       </PopoverContent>
     </Popover>
   );

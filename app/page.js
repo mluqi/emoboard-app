@@ -7,7 +7,7 @@ import Auth from "@/components/auth/Auth";
 import EmoBoardLoader from "@/components/common/EmoBoardLoader";
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, isProcessingAuth } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -16,13 +16,13 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  if (loading || user) {
+  if (loading || user || isProcessingAuth) {
     return <EmoBoardLoader />;
   }
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-center p-4">
+    <div className="flex flex-grow w-full flex-col items-center justify-center p-4">
       <Auth />
-    </main>
+    </div>
   );
 }
