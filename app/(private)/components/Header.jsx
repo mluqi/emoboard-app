@@ -17,11 +17,11 @@ const Header = () => {
 
   const handleLogout = async () => {
     await client.auth.signOut();
-    router.push("/");
+    router.push("/login");
   };
 
   // Jangan tampilkan header di halaman login/register
-  if (pathname === "/") {
+  if (pathname === "/login") {
     return null;
   }
 
@@ -50,7 +50,7 @@ const Header = () => {
 
         {/* Logo (Centered on all devices) */}
         <Link
-          href="/dashboard"
+          href="/"
           className="absolute left-1/2 transform -translate-x-1/2"
         >
           <span className="font-bold text-xl text-primary">

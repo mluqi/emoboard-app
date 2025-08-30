@@ -21,6 +21,8 @@ async function getPostDataForOg(postId) {
         p_mood: null,
         p_requesting_user_id: null,
         p_post_ids: [postId],
+        p_page: 1,
+        p_limit: 1,
       })
       .single();
     if (error) throw error;

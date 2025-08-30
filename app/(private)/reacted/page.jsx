@@ -43,6 +43,8 @@ const ReactedPostsPage = () => {
           p_user_id: null,
           p_requesting_user_id: user.id,
           p_post_ids: postIds,
+          p_page: 1,
+          p_limit: 100, // Atau implementasikan infinite scroll di sini juga
         }
       );
 
@@ -92,4 +94,3 @@ const ReactedPostsPage = () => {
 };
 
 export default ReactedPostsPage;
-

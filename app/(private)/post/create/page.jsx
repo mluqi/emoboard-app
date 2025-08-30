@@ -9,7 +9,7 @@ const CreatePostPage = () => {
   const router = useRouter();
 
   const handlePostCreated = () => {
-    router.push("/dashboard");
+    router.push("/");
   };
 
   return (

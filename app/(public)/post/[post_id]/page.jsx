@@ -11,6 +11,8 @@ async function getPostData(postId) {
         p_mood: null,
         p_requesting_user_id: null, // Tidak diperlukan untuk render di server
         p_post_ids: [postId],
+        p_page: 1,
+        p_limit: 1,
       })
       .single();
 

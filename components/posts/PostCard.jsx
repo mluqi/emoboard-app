@@ -27,7 +27,12 @@ import { toast } from "sonner";
 import { formatPostDate } from "@/lib/dateUtils";
 import DeleteConfirmationDialog from "../common/DeleteConfirmationDialog";
 
-const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled }) => {
+const PostCard = ({
+  post,
+  onPostDeleted,
+  isDetailPage = false,
+  onReactionToggled,
+}) => {
   const {
     // ... (properti post lainnya)
     post_id,
@@ -55,7 +60,9 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
 
     // Jangan navigasi jika elemen interaktif (link, tombol, dll.) yang diklik.
     if (
-      e.target.closest('a, button, [role="button"], [data-radix-collection-item]')
+      e.target.closest(
+        'a, button, [role="button"], [data-radix-collection-item]'
+      )
     ) {
       return;
     }
@@ -191,7 +198,9 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
       id={post_id}
       style={{ borderLeft: `4px solid ${color_tag || "transparent"}` }}
       className={`scroll-mt-20 bg-card border-none shadow-lg ${
-        !isDetailPage ? "cursor-pointer hover:bg-muted/50 transition-colors" : ""
+        !isDetailPage
+          ? "cursor-pointer hover:bg-muted/50 transition-colors"
+          : ""
       }`}
       ref={cardRef}
       onClick={!isDetailPage ? handleCardClick : undefined}
@@ -244,14 +253,16 @@ const PostCard = ({ post, onPostDeleted, isDetailPage = false, onReactionToggled
             variant="ghost"
             size="sm"
             onClick={() => setCommentsOpen(!commentsOpen)}
-            className="flex-1 justify-center w-full"
+            className="flex-1 justify-center w-full cursor-pointer"
           >
             <MessageSquare className="mr-2 h-4 w-4" />
             {comment_count || 0} Comments
           </Button>
         </div>
       </CardFooter>
-      {commentsOpen && <CommentSection postId={post_id} isPostAnonymous={is_anonymous} />}
+      {commentsOpen && (
+        <CommentSection postId={post_id} isPostAnonymous={is_anonymous} />
+      )}
     </Card>
   );
 };

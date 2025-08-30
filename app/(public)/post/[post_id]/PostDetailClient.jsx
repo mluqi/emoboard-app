@@ -12,7 +12,7 @@ const PostDetailClient = ({ post }) => {
   return (
     <div className="w-full max-w-2xl">
       <div className="mb-4">
-        <BackButton>Back to Feed</BackButton>
+        <BackButton />
       </div>
       <PostCard post={post} isDetailPage={true} />
     </div>

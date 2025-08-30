@@ -14,19 +14,19 @@ const MobileBottomNavbar = () => {
 
   const navLinks = user && profile
     ? [
-        { href: "/dashboard", icon: Home, label: "Home" },
+        { href: "/", icon: Home, label: "Home" },
         { href: "/post/create", icon: PlusSquare, label: "Post" },
         // { href: "/notifications", icon: Bell, label: "Notifications" },
         { href: "/reacted", icon: SmileIcon, label: "Reacted" },
         { href: `/profile/${profile.username}`, icon: User, label: "Profile" },
       ]
     : [
-        { href: "/dashboard", icon: Home, label: "Home" },
-        { href: "", icon: LogIn, label: "Login" },
+        { href: "/", icon: Home, label: "Home" },
+        { href: "/login", icon: LogIn, label: "Login" },
       ];
 
   // Jangan tampilkan navbar di halaman login/register
-  if (pathname === '/' || pathname === '/') {
+  if (pathname === '/login') {
     return null;
   }
 
@@ -60,7 +60,7 @@ const MobileBottomNavbar = () => {
                 </span>
               )}
             </div>
-            <span className="text-xs mt-1">{label}</span>
+            {/* <span className="text-xs mt-1">{label}</span> */}
           </Link>
         ))}
       </div>

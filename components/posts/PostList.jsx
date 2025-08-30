@@ -1,12 +1,16 @@
 import React from "react";
 import PostCard from "./PostCard";
 import PostCardSkeleton from "./PostCardSkeleton";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const PostList = ({
   posts,
   loading,
   onPostDeleted,
   onReactionToggled,
+  fetchMoreData,
+  hasMore,
+  emptyMessage = "No posts found. Why not create one?",
 }) => {
   if (loading) {
     return (
@@ -19,11 +23,22 @@ const PostList = ({
   }
 
   if (!posts || posts.length === 0) {
-    return <p className="text-center text-muted-foreground mt-8">No posts found. Why not create one?</p>;
+    return <p className="text-center text-muted-foreground mt-8">{emptyMessage}</p>;
   }
 
   return (
-    <div className="w-full max-w-2xl space-y-6">
+    <InfiniteScroll
+      dataLength={posts.length}
+      next={fetchMoreData}
+      hasMore={hasMore}
+      loader={<PostCardSkeleton />}
+      endMessage={
+        <p className="text-center text-muted-foreground mt-8">
+          <b>You have seen it all!</b>
+        </p>
+      }
+      className="w-full max-w-2xl space-y-6"
+    >
       {posts.map((post) => (
         <PostCard
           key={post.post_id}
@@ -32,7 +47,7 @@ const PostList = ({
           onReactionToggled={onReactionToggled}
         />
       ))}
-    </div>
+    </InfiniteScroll>
   );
 };
 

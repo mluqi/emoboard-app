@@ -29,7 +29,7 @@ const ProfileHeader = ({ profile }) => {
 
   const handleLogout = async () => {
     await client.auth.signOut();
-    router.push("/");
+    router.push("/login");
     setIsOpen(false);
   };
 

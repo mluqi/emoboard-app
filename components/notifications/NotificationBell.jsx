@@ -40,7 +40,7 @@ const NotificationBell = () => {
   };
 
   return (
-    <Popover onOpenChange={handleOpenChange} >
+    <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild disabled={isNotificationsPage}>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
