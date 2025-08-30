@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import client from "@/api/client";
 import useAuth from "@/hooks/useAuth";
+import OAuthButtons from "./OAuthButtons";
 
 const SignUp = () => {
   const { startProcessingAuth, stopProcessingAuth, isProcessingAuth } = useAuth();
@@ -45,7 +46,7 @@ const SignUp = () => {
   };
 
   return (
-    <Card>
+    <Card className={"bg-transparent"}>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6">
@@ -77,6 +78,7 @@ const SignUp = () => {
             </Button>
           </div>
         </form>
+        <OAuthButtons />
       </CardContent>
     </Card>
   );
